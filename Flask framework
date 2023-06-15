@@ -1,0 +1,37 @@
+from flask import Flask, render_template, request, redirect
+
+app = Flask(__name__)
+
+# Store registered users
+registered_users = []
+
+
+@app.route('/')
+def index():
+    return render_template('register.html')
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    email = request.form.get('email')
+
+    # Validate input
+    if not username or not password or not email:
+        return "All fields are required. Please try again."
+
+    # Check if the username is already taken
+    for user in registered_users:
+        if user['username'] == username:
+            return "Username is already taken. Please choose a different username."
+
+    # Register the user
+    registered_users.append({'username': username, 'password': password, 'email': email})
+
+    # Redirect to a success page or display a success message
+    return "Registration successful! Welcome, " + username + "!"
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
